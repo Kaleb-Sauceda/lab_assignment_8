@@ -4,10 +4,94 @@
 
 int extraMemoryAllocated;
 
+void swap(int* a, int* b)
+{
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void heapAlgorithm(int arr[], int n, int i)
+{
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+    if (left < n && arr[left] > arr[largest])
+    {
+        largest = left;
+    }
+    if (right < n && arr[right] > arr[largest])
+    {
+        largest = right;
+    }
+    if (largest != i)
+    {
+        swap(&arr[i], &arr[largest]);
+        heapAlgorithm(arr, n, largest);
+    }
+}
+
 // implements heap sort
 // extraMemoryAllocated counts bytes of memory allocated
 void heapSort(int arr[], int n)
 {
+    for (int i = n / 2 - 1; i >= 0; i--)
+    {
+        heapAlgorithm(arr, n, i);
+    }
+    
+    for (int i = n - 1; i >= 0; i--)
+    {
+        swap(&arr[0], &arr[i]);
+        heapAlgorithm(arr, i, 0);
+    }
+}
+
+void merge(int pData[], int l, int m, int r) 
+{ 
+    int i, j, k; 
+    int n1 = m - l + 1; 
+    int n2 = r - m; 
+    int L[n1], R[n2]; 
+    for (i = 0; i < n1; i++)
+    {
+        L[i] = pData[l + i];
+    }
+    for (j = 0; j < n2; j++)
+    {
+        R[j] = pData[m + 1 + j];
+    }
+    
+    i = 0; // Initial index of first subarray 
+    j = 0; // Initial index of second subarray 
+    k = l; // Initial index of merged subarray 
+    while (i < n1 && j < n2)
+    {
+        if (L[i] <= R[j])
+        {
+            pData[k] = L[i]; 
+            i++; 
+        }
+        else
+        {
+            pData[k] = R[j]; 
+            j++; 
+        }
+        k++; 
+    }
+    
+    while (i < n1)
+    {
+        pData[k] = L[i]; 
+        i++; 
+        k++; 
+    }
+    
+    while (j < n2){ 
+        pData[k] = R[j]; 
+        j++; 
+        k++; 
+    }
 }
 
 
@@ -15,6 +99,13 @@ void heapSort(int arr[], int n)
 // extraMemoryAllocated counts bytes of extra memory allocated
 void mergeSort(int pData[], int l, int r)
 {
+    if (l < r)
+    {
+        int m = (l+r)/2;
+        mergeSort(pData, l, m);
+        mergeSort(pData, m + 1, r);
+        merge(pData, l, m, r);
+    }
 }
 
 // parses input file to an integer array
@@ -114,3 +205,4 @@ int main(void)
 	}
 	
 }
+
